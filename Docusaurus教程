@@ -1,0 +1,93 @@
+## 初始化项目
+
+执行初始化命令，创建名为`arkweb-doc`的文档站（经典模板，含文档、导航、暗黑模式）
+
+```bash
+npx create-docusaurus@latest 站点名称 classic
+```
+
+进入项目目录，启动本地开发服务（默认端口 3000，修改端口可加`--port 8080`）
+
+```bash
+cd 站点名称
+npm run start
+```
+
+## 发布部署
+
+### 一、前置准备
+
+- 安装 [Node.js](https://nodejs.org/)（含 npm）
+- 安装 [Git](https://git-scm.com/)
+- 拥有 GitHub 账号，并已创建好空仓库（例如 `liuxiaomingood-design/my-docs2`）
+- 配置 SSH 密钥并添加到 GitHub（若未配置，可参考[官方文档](https://docs.github.com/zh/authentication/connecting-to-github-with-ssh)）
+
+### 二、项目配置
+在项目根目录（例如 `D:\my-website`）中编辑 `docusaurus.config.js`，确保以下字段正确填写：
+
+```javascript
+module.exports = {
+  url: 'https://liuxiaomingood-design.github.io',   // GitHub Pages 域名
+  baseUrl: '/my-docs2/',                             // 仓库名，首尾斜杠
+  organizationName: 'liuxiaomingood-design',        // GitHub 用户名
+  projectName: 'my-docs2',                          // 仓库名
+  deploymentBranch: 'gh-pages',                     // 部署分支，固定为 gh-pages
+  // 其他配置...
+};
+```
+
+### 三、初始化 Git 并关联远程仓库
+在项目根目录打开 **PowerShell** 或 **Git Bash**（推荐使用，避免 cmd 环境变量问题），执行：
+
+```bash
+git init
+git add .
+git commit -m "Initial commit"
+git remote add origin git@github.com:liuxiaomingood-design/my-docs2.git   # 使用 SSH 地址
+```
+
+> **关键点**：必须使用 SSH 地址（`git@github.com:用户名/仓库名.git`），而不是 HTTPS 地址。
+
+### 四、手动创建 `gh-pages` 分支（首次部署必需）
+```bash
+# 创建并切换到 orphan 分支（无历史）
+git checkout --orphan gh-pages
+# 清空工作区，添加一个占位文件
+git rm -rf .
+echo "# Temporary placeholder" > README.md
+git add README.md
+git commit -m "Initialize gh-pages branch"
+# 推送到远程
+git push origin gh-pages
+# 切换回原来的默认分支（通常是 main 或 master）
+git checkout master
+```
+
+### 五、执行部署
+确保当前在项目根目录，使用 **PowerShell** 或 **Git Bash** 执行：
+
+```powershell
+# PowerShell
+$env:USE_SSH = "true"; npm run deploy
+```
+
+```bash
+# Git Bash
+USE_SSH=true npm run deploy
+```
+
+```bash
+# CMD
+set USE_SSH=true 
+npm run deploy
+```
+
+部署命令会自动构建站点，并将 `build` 文件夹内容推送到 `gh-pages` 分支。
+
+### 六、验证
+等待 1-2 分钟，访问：
+```
+https://liuxiaomingood-design.github.io/my-docs2/
+```
+如果看到站点内容，说明部署成功。
+
